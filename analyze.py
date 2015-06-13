@@ -39,36 +39,58 @@ def parse_2014():
     schooling_types = schooling_types[1:]
     schooling_numbers = schooling_numbers[1:]
 
-    # Remove blank rows.
-    blank_names = np.where(schooling_types == '')
-    if not np.all(schooling_numbers[blank_names] == ''):
-        raise ValueError('Values are in empty rows are non-empty')
-
-    nonblank_names = np.where(schooling_types != '')
-    schooling_types = schooling_types[nonblank_names]
-    schooling_numbers = schooling_numbers[nonblank_names]
-
-    # Remove footnotes
-    if not np.all(schooling_numbers[-3:] == ''):
+    # Remove footnotes, intentionally leave a blank row.
+    if not np.all(schooling_numbers[-4:] == ''):
         raise ValueError('Expected footer rows')
-    schooling_numbers = schooling_numbers[:-3]
-    schooling_types = schooling_types[:-3]
+    schooling_numbers = schooling_numbers[:-4]
+    schooling_types = schooling_types[:-4]
 
-    # NOTE: We ignore (but could use if we chose) the categories
-    #       given by schooling_types.
-    # blank_numbers = np.where(schooling_numbers == '')
-    # categories = schooling_types[blank_numbers]
-    non_blank_numbers = np.where(schooling_numbers != '')
-    schooling_numbers = schooling_numbers[non_blank_numbers]
-    schooling_types = schooling_types[non_blank_numbers]
+    result = []
 
-    schooling_numbers = np.vectorize(to_int)(schooling_numbers)
+    separator_rows, = np.where(schooling_types == '')
+    num_sections = len(separator_rows) - 1
+    for section in xrange(num_sections):
+        begin_index = separator_rows[section] + 1
+        end_index = separator_rows[section + 1] - 1
 
-    result = dict(zip(schooling_types, schooling_numbers))
-    if sum(result.values()) != total_people:
+        # Determine if the section has a category.
+        category = None
+        if schooling_numbers[begin_index] == '':
+            category = schooling_types[begin_index]
+            begin_index += 1
+
+        for index in xrange(begin_index, end_index + 1):
+            result.append((
+                schooling_types[index],
+                category,
+                to_int(schooling_numbers[index]),
+            ))
+
+    if sum([val[-1] for val in result]) != total_people:
         raise ValueError('Total does not match observed.')
     return total_people, result
 
 
 def analyze_2014():
     total_people, result = parse_2014()
+
+    # Assumes the data is in order of educational attainment from
+    # least (i.e. Less than 1st grade) to most (i.e. PhD)
+
+    # We expect exactly one match for each type.
+    begin_of_hs, = [row for row, value in enumerate(result)
+                    if value[0] == 'High school diploma']
+    begin_of_bachelors, = [row for row, value in enumerate(result)
+                           if value[0] == 'Bachelors degree only']
+
+    hs_tot = sum([value[-1] for value in result[begin_of_hs:]])
+    bachelors_tot = sum([
+        value[-1] for value in result[begin_of_bachelors:]])
+
+    total_people = float(total_people)
+    hs_percent = hs_tot / total_people
+    bachelors_percent = bachelors_tot / total_people
+
+    print '2014: HS -> %4.1f and BA/BS -> %4.1f' % (
+        100 * hs_percent, 100 * bachelors_percent)
+    return hs_percent, bachelors_percent
