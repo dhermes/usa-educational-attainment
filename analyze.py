@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+
+import argparse
 import csv
 import os
 
@@ -107,3 +110,21 @@ def analyze_2014():
         result.append((num_col_name, hs_percent, bachelors_percent))
 
     return result
+
+
+def main():
+    year_choices = {
+        2014: analyze_2014,
+    }
+    parser = argparse.ArgumentParser(
+        description='Run analysis on educational attainment census data')
+    parser.add_argument('--year', dest='year', type=int,
+                        choices=(2014,), default=2014,
+                        help='Year of data to analyze.')
+    args = parser.parse_args()
+    method = year_choices[args.year]
+    method()
+
+
+if __name__ == '__main__':
+    main()
