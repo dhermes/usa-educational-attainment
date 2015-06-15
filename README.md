@@ -6,10 +6,11 @@ age groups over time.
 
 ## Sources
 
+- [Previous Years Before 2000][14], [Current Years][15]
 - Year: [2014][1], [Table 3][10]
 - Year: [2010][2], [Table 3][11]
 - Year: [2005][3], [Table 1][12]
-- Year: [2000][4]
+- Year: [2000][4], [Table 1][13]
 - Year: [1995][5]
 - Year: [1990][6]
 - Year: [1985][7]
@@ -28,3 +29,6 @@ age groups over time.
 [10]: http://www.census.gov/hhes/socdemo/education/data/cps/2014/Table%203.csv
 [11]: http://www.census.gov/hhes/socdemo/education/data/cps/2010/Table3.csv
 [12]: http://www.census.gov/hhes/socdemo/education/data/cps/2005/tab01-01.csv
+[13]: http://www.census.gov/hhes/socdemo/education/data/cps/2000/tab01.txt
+[14]: http://www.census.gov/hhes/socdemo/education/data/cps/previous.html
+[15]: http://www.census.gov/hhes/socdemo/education/data/cps/index.html
