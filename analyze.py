@@ -15,14 +15,21 @@ def main():
     }
     parser = argparse.ArgumentParser(
         description='Run analysis on educational attainment census data')
-    parser.add_argument('--year', dest='year', type=int,
-                        choices=tuple(year_choices.keys()), default=2014,
-                        help='Year of data to analyze.')
-    args = parser.parse_args()
+    subparsers = parser.add_subparsers(help='Subcommands to choose',
+                                       dest='chosen_parser')
 
-    method = year_choices[args.year]
-    for data in method():
-        data.display(args.year)
+    text_display_parser = subparsers.add_parser(
+        'text', description='View numbers as text for a chosen year')
+    text_display_parser.add_argument(
+        '--year', dest='year', type=int,
+        choices=tuple(year_choices.keys()), required=True,
+        help='Year of data to analyze.')
+
+    args = parser.parse_args()
+    if args.chosen_parser == 'text':
+        method = year_choices[args.year]
+        for data in method():
+            data.display(args.year)
 
 
 if __name__ == '__main__':
