@@ -19,8 +19,10 @@ def main():
                         choices=tuple(year_choices.keys()), default=2014,
                         help='Year of data to analyze.')
     args = parser.parse_args()
+
     method = year_choices[args.year]
-    method()
+    for data in method():
+        data.display(args.year)
 
 
 if __name__ == '__main__':

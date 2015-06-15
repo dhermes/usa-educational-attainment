@@ -3,6 +3,7 @@ import os
 import numpy as np
 
 from common import TABLES_DIR
+from common import CohortData
 from common import load_non_rectangular
 from common import to_int
 
@@ -70,7 +71,8 @@ def _get_total(curr_rows, curr_row_names, row_names,
     min_bachelors_total = np.sum(combined_data[min_bachelors:])
 
     actual_total = np.sum(combined_data)
-    return min_hs_total, min_bachelors_total, actual_total
+    return CohortData(None, actual_total, min_hs_total,
+                      min_bachelors_total)
 
 
 def _get_all_ages(row_names, column_names, cohort_data):
@@ -88,15 +90,19 @@ def _get_all_ages(row_names, column_names, cohort_data):
         '70 to 74 years',
         '75 years and over',
     ]
-    return _get_total(curr_rows, curr_row_names, row_names,
+    data = _get_total(curr_rows, curr_row_names, row_names,
                       column_names, cohort_data)
+    data.name = 'ALL AGES'
+    return data
 
 
 def _get_25_to_34(row_names, column_names, cohort_data):
     curr_rows = [4, 5]
     curr_row_names = ['25 to 29 years', '30 to 34 years']
-    return _get_total(curr_rows, curr_row_names, row_names,
+    data = _get_total(curr_rows, curr_row_names, row_names,
                       column_names, cohort_data)
+    data.name = '25 TO 34 YEARS OLD'
+    return data
 
 
 def _get_35_to_54(row_names, column_names, cohort_data):
@@ -107,8 +113,10 @@ def _get_35_to_54(row_names, column_names, cohort_data):
         '45 to 49 years',
         '50 to 54 years',
     ]
-    return _get_total(curr_rows, curr_row_names, row_names,
+    data = _get_total(curr_rows, curr_row_names, row_names,
                       column_names, cohort_data)
+    data.name = '35 TO 54 YEARS OLD'
+    return data
 
 
 def _get_55_and_older(row_names, column_names, cohort_data):
@@ -120,38 +128,31 @@ def _get_55_and_older(row_names, column_names, cohort_data):
         '70 to 74 years',
         '75 years and over',
     ]
-    return _get_total(curr_rows, curr_row_names, row_names,
+    data = _get_total(curr_rows, curr_row_names, row_names,
                       column_names, cohort_data)
-
-
-def display_values(hs_total, bachelors_total, actual_total,
-                   year, pretty_name):
-    hs_percent = (hs_total * 100.0) / actual_total
-    bachelors_percent = (bachelors_total * 100.0) / actual_total
-    print '%d; %25s: HS -> %4.1f and BA/BS -> %4.1f' % (
-        year, pretty_name, hs_percent, bachelors_percent)
+    data.name = '55 YEARS OLD AND OVER'
+    return data
 
 
 def analyze_2005():
     sheet = load_2005()
     row_names, column_names, cohort_data = parse_2005(sheet)
 
+    result = []
     # ALL AGES
-    args = (_get_all_ages(row_names, column_names, cohort_data) +
-            (2005, 'ALL AGES'))
-    display_values(*args)
+    data = _get_all_ages(row_names, column_names, cohort_data)
+    result.append(data)
 
     # 25-34
-    args = (_get_25_to_34(row_names, column_names, cohort_data) +
-            (2005, '25 TO 34 YEARS OLD'))
-    display_values(*args)
+    data = _get_25_to_34(row_names, column_names, cohort_data)
+    result.append(data)
 
     # 35-54
-    args = (_get_35_to_54(row_names, column_names, cohort_data) +
-            (2005, '35 TO 54 YEARS OLD'))
-    display_values(*args)
+    data = _get_35_to_54(row_names, column_names, cohort_data)
+    result.append(data)
 
     # 55 YEARS OLD AND OVER
-    args = (_get_55_and_older(row_names, column_names, cohort_data) +
-            (2005, '55 YEARS OLD AND OVER'))
-    display_values(*args)
+    data = _get_55_and_older(row_names, column_names, cohort_data)
+    result.append(data)
+
+    return result

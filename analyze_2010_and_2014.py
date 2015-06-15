@@ -4,6 +4,7 @@ import os
 import numpy as np
 
 from common import TABLES_DIR
+from common import CohortData
 from common import to_int
 
 
@@ -88,12 +89,11 @@ def _analyze_2010_or_2014(sheet, year, total_name='', num_footers=4):
         (9, '35 TO 54  YEARS OLD'),
         (11, '55 YEARS OLD AND OVER'),
     ]
-    result = []
+    final_result = []
     for num_col, num_col_name in options:
         pretty_name = ' '.join(num_col_name.split())
         if pretty_name == 'ALL RACES':
             pretty_name = 'ALL AGES'
-        print '%d; %25s:' % (year, pretty_name),
         total_people, result = _parse_2010_or_2014(
             sheet, num_col, num_col_name, total_name=total_name,
             num_footers=num_footers)
@@ -111,15 +111,10 @@ def _analyze_2010_or_2014(sheet, year, total_name='', num_footers=4):
         bachelors_tot = sum([
             value[-1] for value in result[begin_of_bachelors:]])
 
-        total_people = float(total_people)
-        hs_percent = hs_tot / total_people
-        bachelors_percent = bachelors_tot / total_people
+        data = CohortData(pretty_name, total_people, hs_tot, bachelors_tot)
+        final_result.append(data)
 
-        print 'HS -> %4.1f and BA/BS -> %4.1f' % (
-            100 * hs_percent, 100 * bachelors_percent)
-        result.append((num_col_name, hs_percent, bachelors_percent))
-
-    return result
+    return final_result
 
 
 def analyze_2010():
