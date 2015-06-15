@@ -3,16 +3,8 @@ import os
 
 import numpy as np
 
-from common import BASE_DIR
 from common import TABLES_DIR
-
-
-def to_int(val):
-    # See footnote (in 2010 and 2014):
-    # A dash (-) represents zero or rounds to zero.
-    if val == '-':
-        return 0
-    return int(val.replace(',', ''))
+from common import to_int
 
 
 def _parse_2010_or_2014(sheet, num_col, num_col_name,
@@ -99,6 +91,8 @@ def _analyze_2010_or_2014(sheet, year, total_name='', num_footers=4):
     result = []
     for num_col, num_col_name in options:
         pretty_name = ' '.join(num_col_name.split())
+        if pretty_name == 'ALL RACES':
+            pretty_name = 'ALL AGES'
         print '%d; %25s:' % (year, pretty_name),
         total_people, result = _parse_2010_or_2014(
             sheet, num_col, num_col_name, total_name=total_name,
