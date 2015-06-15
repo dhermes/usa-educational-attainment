@@ -12,18 +12,15 @@ TABLES_DIR = os.path.join(BASE_DIR, 'tables')
 
 
 def to_int(val):
+    # See footnote (in 2010 and 2014):
+    # A dash (-) represents zero or rounds to zero.
+    if val == '-':
+        return 0
     return int(val.replace(',', ''))
 
 
-def parse_2014(num_col, num_col_name):
-    filename = os.path.join(TABLES_DIR, '2014_Table_3.csv')
-    with open(filename, 'rb') as csvfile:
-        reader = csv.reader(csvfile)
-        sheet = np.array(list(reader))
-
-    if sheet.shape != (69, 24):
-        raise ValueError('Unexpected data shape.')
-
+def _parse_2010_or_2014(sheet, num_col, num_col_name,
+                        total_name, num_footers):
     # Check header row.
     headers = [
         ['Detailed Years of School', num_col_name],
@@ -36,7 +33,7 @@ def parse_2014(num_col, num_col_name):
     schooling_types = sheet[6:, type_col]
     schooling_numbers = sheet[6:, num_col]
 
-    if schooling_types[0] != '':
+    if schooling_types[0] != total_name:
         raise ValueError('Unexpected name for "total"')
 
     total_people = to_int(schooling_numbers[0])
@@ -44,10 +41,10 @@ def parse_2014(num_col, num_col_name):
     schooling_numbers = schooling_numbers[1:]
 
     # Remove footnotes, intentionally leave a blank row.
-    if not np.all(schooling_numbers[-4:] == ''):
+    if not np.all(schooling_numbers[-num_footers:] == ''):
         raise ValueError('Expected footer rows')
-    schooling_numbers = schooling_numbers[:-4]
-    schooling_types = schooling_types[:-4]
+    schooling_numbers = schooling_numbers[:-num_footers]
+    schooling_types = schooling_types[:-num_footers]
 
     result = []
 
@@ -75,7 +72,28 @@ def parse_2014(num_col, num_col_name):
     return total_people, result
 
 
-def analyze_2014():
+def load_2010():
+    filename = os.path.join(TABLES_DIR, '2010_Table_3.csv')
+    with open(filename, 'rb') as csvfile:
+        reader = csv.reader(csvfile)
+        sheet = np.array(list(reader))
+    if sheet.shape != (70, 23):
+        raise ValueError('Unexpected data shape.')
+    return sheet
+
+
+def load_2014():
+    filename = os.path.join(TABLES_DIR, '2014_Table_3.csv')
+    with open(filename, 'rb') as csvfile:
+        reader = csv.reader(csvfile)
+        sheet = np.array(list(reader))
+    if sheet.shape != (69, 24):
+        raise ValueError('Unexpected data shape.')
+
+    return sheet
+
+
+def _analyze_2010_or_2014(sheet, year, total_name='', num_footers=4):
     options = [
         (1, 'ALL RACES'),
         (7, '25 TO 34  YEARS OLD'),
@@ -85,8 +103,10 @@ def analyze_2014():
     result = []
     for num_col, num_col_name in options:
         pretty_name = ' '.join(num_col_name.split())
-        print '2014; %25s:' % (pretty_name,),
-        total_people, result = parse_2014(num_col, num_col_name)
+        print '%d; %25s:' % (year, pretty_name),
+        total_people, result = _parse_2010_or_2014(
+            sheet, num_col, num_col_name, total_name=total_name,
+            num_footers=num_footers)
 
         # Assumes the data is in order of educational attainment from
         # least (i.e. Less than 1st grade) to most (i.e. PhD)
@@ -112,14 +132,26 @@ def analyze_2014():
     return result
 
 
+def analyze_2010():
+    sheet = load_2010()
+    return _analyze_2010_or_2014(sheet, 2010, total_name='Total',
+                                 num_footers=5)
+
+
+def analyze_2014():
+    sheet = load_2014()
+    return _analyze_2010_or_2014(sheet, 2014)
+
+
 def main():
     year_choices = {
+        2010: analyze_2010,
         2014: analyze_2014,
     }
     parser = argparse.ArgumentParser(
         description='Run analysis on educational attainment census data')
     parser.add_argument('--year', dest='year', type=int,
-                        choices=(2014,), default=2014,
+                        choices=tuple(year_choices.keys()), default=2014,
                         help='Year of data to analyze.')
     args = parser.parse_args()
     method = year_choices[args.year]
