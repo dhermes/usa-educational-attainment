@@ -1,14 +1,10 @@
-#!/usr/bin/env python
-
-import argparse
 import csv
 import os
 
 import numpy as np
 
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-TABLES_DIR = os.path.join(BASE_DIR, 'tables')
+from common import BASE_DIR
+from common import TABLES_DIR
 
 
 def to_int(val):
@@ -141,22 +137,3 @@ def analyze_2010():
 def analyze_2014():
     sheet = load_2014()
     return _analyze_2010_or_2014(sheet, 2014)
-
-
-def main():
-    year_choices = {
-        2010: analyze_2010,
-        2014: analyze_2014,
-    }
-    parser = argparse.ArgumentParser(
-        description='Run analysis on educational attainment census data')
-    parser.add_argument('--year', dest='year', type=int,
-                        choices=tuple(year_choices.keys()), default=2014,
-                        help='Year of data to analyze.')
-    args = parser.parse_args()
-    method = year_choices[args.year]
-    method()
-
-
-if __name__ == '__main__':
-    main()
