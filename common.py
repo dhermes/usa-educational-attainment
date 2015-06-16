@@ -32,7 +32,7 @@ class CohortData(object):
 def to_int(val):
     # See footnote (in 2005, 2010, and 2014):
     # A dash (-) represents zero or rounds to zero.
-    if val == '-':
+    if val.strip() == '-':
         return 0
     return int(val.replace(',', ''))
 

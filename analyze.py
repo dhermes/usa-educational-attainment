@@ -2,6 +2,7 @@
 
 import argparse
 
+from analyze_2000 import analyze_2000
 from analyze_2005 import analyze_2005
 from analyze_2010_and_2014 import analyze_2010
 from analyze_2010_and_2014 import analyze_2014
@@ -92,6 +93,7 @@ def make_plot(year_choices):
 
 def main():
     year_choices = {
+        2000: analyze_2000,
         2005: analyze_2005,
         2010: analyze_2010,
         2014: analyze_2014,
