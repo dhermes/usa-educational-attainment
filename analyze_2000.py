@@ -4,12 +4,12 @@ import os
 
 import numpy as np
 
-from analyze_2005 import _get_all_ages
-from analyze_2005 import _get_25_to_34
-from analyze_2005 import _get_35_to_54
-from analyze_2005 import _get_55_and_older
-from common import TABLES_DIR
 from common import CohortData
+from common import TABLES_DIR
+from common import _get_all_ages
+from common import _get_25_to_34
+from common import _get_35_to_54
+from common import _get_55_and_older
 from common import to_int
 
 
