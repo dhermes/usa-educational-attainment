@@ -4,6 +4,9 @@ For the purpose of accurate numbers, organizing and referencing
 existing census data to understand educational attainment among
 age groups over time.
 
+Special [report][16] (from 1995) doing most of what we are
+attempting here.
+
 ## Sources
 
 - [Previous Years Before 2000][14], [Current Years][15]
@@ -32,3 +35,4 @@ age groups over time.
 [13]: http://www.census.gov/hhes/socdemo/education/data/cps/2000/tab01.txt
 [14]: http://www.census.gov/hhes/socdemo/education/data/cps/previous.html
 [15]: http://www.census.gov/hhes/socdemo/education/data/cps/index.html
+[16]: http://www.census.gov/prod/2/pop/p20/p20-489.pdf
