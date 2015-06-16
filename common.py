@@ -131,3 +131,26 @@ def _get_55_and_older(row_names, column_names, cohort_data):
                       column_names, cohort_data)
     data.name = '55 YEARS OLD AND OVER'
     return data
+
+
+def analyze_generic(parse_method):
+    row_names, column_names, cohort_data = parse_method()
+
+    result = []
+    # ALL AGES
+    data = _get_all_ages(row_names, column_names, cohort_data)
+    result.append(data)
+
+    # 25-34
+    data = _get_25_to_34(row_names, column_names, cohort_data)
+    result.append(data)
+
+    # 35-54
+    data = _get_35_to_54(row_names, column_names, cohort_data)
+    result.append(data)
+
+    # 55 YEARS OLD AND OVER
+    data = _get_55_and_older(row_names, column_names, cohort_data)
+    result.append(data)
+
+    return result

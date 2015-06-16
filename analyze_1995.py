@@ -3,12 +3,8 @@ import os
 
 import numpy as np
 
-from common import CohortData
 from common import TABLES_DIR
-from common import _get_all_ages
-from common import _get_25_to_34
-from common import _get_35_to_54
-from common import _get_55_and_older
+from common import analyze_generic
 from common import to_int
 
 
@@ -40,23 +36,4 @@ def parse_1995():
 
 
 def analyze_1995():
-    row_names, column_names, cohort_data = parse_1995()
-
-    result = []
-    # ALL AGES
-    data = _get_all_ages(row_names, column_names, cohort_data)
-    result.append(data)
-
-    # 25-34
-    data = _get_25_to_34(row_names, column_names, cohort_data)
-    result.append(data)
-
-    # 35-54
-    data = _get_35_to_54(row_names, column_names, cohort_data)
-    result.append(data)
-
-    # 55 YEARS OLD AND OVER
-    data = _get_55_and_older(row_names, column_names, cohort_data)
-    result.append(data)
-
-    return result
+    return analyze_generic(parse_1995)
