@@ -14,8 +14,8 @@ attempting here.
 - Year: [2010][2], [Table 3][11]
 - Year: [2005][3], [Table 1][12]
 - Year: [2000][4], [Table 1][13]
-- Year: [1995][5]
-- Year: [1990][6]
+- Year: [1995][5], Table 1 copied by hand from PDF
+- Year: [1990][6], [Table 1][17]
 - Year: [1985][7]
 - Year: [1980][8]
 - Year: [1975][9]
@@ -36,3 +36,4 @@ attempting here.
 [14]: http://www.census.gov/hhes/socdemo/education/data/cps/previous.html
 [15]: http://www.census.gov/hhes/socdemo/education/data/cps/index.html
 [16]: http://www.census.gov/prod/2/pop/p20/p20-489.pdf
+[17]: http://www.census.gov/hhes/socdemo/education/data/cps/1991/tab01.pdf
